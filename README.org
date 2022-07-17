@@ -1,0 +1,63 @@
+#+TITLE: Simple Lisp Compiler Design Doc
+
+* Usage
+- slc
+- Only reads from stdin
+- Only outputs to stdout
+- Very very simple
+- Unoptomized
+- All expressions need a space, and the very last one also needs a space
+- Passes as --fatal-warnings with flying colors
+
+* Goal: get a (very) simple Lisp compiler up and running
+
+* Map:
+** DONE BNF description of language
+- program := expression * 
+- expression := ( operator argument [ argument | expression ] )
+- operator := + | - | * | / (add more with builtins)
+- argument := [A..Za..z]* | [0..9]
+** DONE basic arithmetic
+- Incl. dealing with negatives
+** DONE multiplication/division
+** DONE parentheses
+- The patch in getnum() doesn't work properly (needs to signal that only a pop is needed)
+- The patch in initreg() DOES, though now I have the issue of the parentheses that gets
+  gobbled - just ignored last paren lmao
+- Also, it freezes with more that 1 nested expression
+  - However, it doesn't even get to the operations...
+  - Or expression(), or operator()
+  - Or even the immediate START tag...
+  - I'm just gonna call it done, and leave it as a mystery (since it's not even calling
+    main()
+- Yeah so actually you just needed to add more parentheses, then it's aight
+** DONE if/else
+** DONE loop and break
+** DONE I/O (stdin/stdout)
+- Do it for windows and with getchar only
+** DONE set variables
+- https://www.cs.uaf.edu/2008/fall/cs301/lecture/12_03_operating_system.html might
+  help
+- Let them accept the result of expressions
+** DONE longer numbers
+** DONE sub variables in with their displacements
+- Can use a struct with one field for name and one for the offset
+- Will have to change where the '$' is put
+** DONE allow setting with getchar
+** DONE change the result of getnum() to a variable whenever it was called and free() it
+** DONE multiple expressions in one thing
+** DONE allow var to be set with expressions
+- It's there, it's just not activating
+** DONE fix issue with having the varname in first argument position
+- (s x 30) (+ x 2) doesn't work
+- (s x 30) (+ 2 x) does
+- So when it's called into num, it don't work properly...
+- BUT, it's an issue with getting num1
+- It's not matching the space, because it gets gobbled
+** DONE when using a variable in a statement, the other argument gets gobbled (if the var is first)
+- Also, it throws an issue with a lack of parentheses
+- It's doing the variable check too many times!
+- Going to have to rewrite it -__-;
+- I was just missing an updatechar() 
+
+** DONE change error() to emit to stderr
