@@ -4,18 +4,22 @@
 
 void slcbreak (void) {
   match('b');
-  emitln("jmp break");
+  emitln("jmp @f");
 }
 
 void loop (void) {
   match('l');
   match(' ');
   /* Format: (l (expression)) */
-  emitln("\nloop:");
+  /* 
+  Anonymous label, so we don't have to come up 
+  with new labels on the fly
+  */
+  emitln("\n@@:");
   match('(');
   expression();
   match(')');
   /* Jump back to the loop label, it's a goto on stilts */
-  emitln("jmp loop");
-  emitln("\nbreak:");
+  emitln("jmp @b");
+  emitln("\n@@:");
 }
